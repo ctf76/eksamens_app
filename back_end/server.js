@@ -38,6 +38,30 @@ app.get("/api/user/:id", async (request, response) => {
   };
 });
 
+app.get("/api/user_name/:partName", async (request, response) => {
+  try {
+    const partName = request.params.partName;
+    const users = await User.findAll(
+      {
+        where: {
+          surname: {
+            [Op.like]: `${partName}%`
+          }
+        }
+      }
+    );
+    // Checking if any users surname starts with input
+    if (users.length === 0) {
+      response.status(404).send(`No users found with a surname which starts with: ${partName}`);
+    } else {
+      // If users are found, send the JSON response
+      response.json(users);
+    }    
+  } catch (err) {
+    console.log(err);
+  };
+});
+
 // Route for updating user
 app.put("/api/user/:id", async (request, response) => {
   const user_id = request.params.id;
